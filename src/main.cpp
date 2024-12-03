@@ -1,27 +1,34 @@
 #include <iomanip>
 #include <iostream>
 #include <map>
+#include <memory>
 #include <random>
 #include <string>
-#include <tuple>
+#include <vector>
 
 template <typename T>
 concept Numerical = std::is_arithmetic_v<T>;
 
+class RandomIf
+{
+  public:
+    virtual ~RandomIf() = default;
+    virtual void simulate(uint32_t, bool) = 0;
+};
+
 template <Numerical T, typename U>
-class Random
+class Random : public RandomIf
 {
   public:
     Random(const std::string& type, U dist) : type{type}, gen{rd()}, dist{dist}
     {}
-    virtual ~Random() = default;
 
-    virtual T operator()()
+    T operator()()
     {
         return dist(gen);
     }
 
-    virtual void simulate(uint32_t samples, bool round = true)
+    void simulate(uint32_t samples, bool round) override
     {
         std::cout << "===== Simulation for distribution " << std::quoted(type)
                   << " started =====\n";
@@ -67,22 +74,21 @@ template <Numerical T = double, typename U = std::exponential_distribution<T>>
 class Exponential : public Random<T, U>
 {
   public:
-    explicit Exponential(double param) :
-        Random<T, U>("exponential", U{param})
+    explicit Exponential(double param) : Random<T, U>("exponential", U{param})
     {}
 };
 
-
 int main()
 {
-    Uniform<uint32_t> uniform({0, 9});
-    uniform.simulate(500);
-    
-    Gaussian<double> gaussian({5.0, 2.0});
-    gaussian.simulate(500);
+    std::vector<std::shared_ptr<RandomIf>> dists = {
+        std::make_shared<Uniform<uint32_t>>(std::make_pair(0, 9)),
+        std::make_shared<Gaussian<double>>(std::make_pair(5.0, 2.0)),
+        std::make_shared<Exponential<double>>(1.0)};
 
-    Exponential<double> exponential(1.0);
-    exponential.simulate(300);
+    for (const auto& randptr : dists)
+    {
+        randptr->simulate(300, true);
+    }
 
     return 0;
 }
