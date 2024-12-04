@@ -1,8 +1,9 @@
 # demo-randdistrib
 Random num generators for various distribution types
 <br><br>
-lukasz@raspberrypi:~/docker/demo-randdistrib $ docker build -t random-generator-sim .<br>
-lukasz@raspberrypi:~/docker/demo-randdistrib $ docker run -t random-generator-sim<br>
+lukasz@raspberrypi:\~/docker/demo-randdistrib $ docker build -t random-generator-sim .<br>
+-<br>
+lukasz@raspberrypi:\~/docker/demo-randdistrib $ docker run -t random-generator-sim<br>
 ===== Simulation for distribution "uniform" started =====<br>
  0 *************************** (27)<br>
  1 ************************** (26)<br>
