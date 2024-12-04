@@ -14,7 +14,10 @@ class RandomIf
   public:
     virtual ~RandomIf() = default;
     virtual void simulate(uint32_t, bool) = 0;
+    static std::vector<std::shared_ptr<RandomIf>> items;
 };
+
+std::vector<std::shared_ptr<RandomIf>> RandomIf::items;
 
 template <Numerical T, typename U>
 class Random : public RandomIf
@@ -35,13 +38,13 @@ class Random : public RandomIf
         std::map<T, uint32_t> hist;
         while (samples--)
             if (round)
-                ++hist[std::round((*this)())];
+                ++hist[(int32_t)std::round((*this)())];
             else
                 ++hist[(*this)()];
 
         for (const auto& [x, y] : hist)
-            std::cout << std::setw(2) << x << ' ' << std::string(y, '*')
-                      << '\n';
+            std::cout << std::setw(2) << x << ' ' << std::string(y, '*') << " ("
+                      << y << ")" << '\n';
         std::cout << "===== Simulation ended =====\n";
     }
 
@@ -58,6 +61,14 @@ class Uniform : public Random<T, U>
   public:
     explicit Uniform(const std::pair<T, T>& param) :
         Random<T, U>("uniform", U{param.first, param.second})
+    {}
+};
+
+template <Numerical T = bool, typename U = std::bernoulli_distribution>
+class Bernoulli : public Random<T, U>
+{
+  public:
+    explicit Bernoulli(double param) : Random<T, U>("bernoulli", U{param})
     {}
 };
 
@@ -78,16 +89,40 @@ class Exponential : public Random<T, U>
     {}
 };
 
+template <Numerical T = int32_t, typename U = std::discrete_distribution<T>>
+class Discrete : public Random<T, U>
+{
+  public:
+    explicit Discrete(const std::initializer_list<double>& param) :
+        Random<T, U>("discrete", U{param})
+    {}
+};
+
+class Collector
+{
+  public:
+    template <typename T, typename P>
+    static void add(const P& param)
+    {
+        auto item = std::make_shared<T>(param);
+        RandomIf::items.push_back(item);
+    }
+};
+
 int main()
 {
-    std::vector<std::shared_ptr<RandomIf>> dists = {
-        std::make_shared<Uniform<uint32_t>>(std::make_pair(0, 9)),
-        std::make_shared<Gaussian<double>>(std::make_pair(5.0, 2.0)),
-        std::make_shared<Exponential<double>>(1.0)};
+    Collector::add<Uniform<uint32_t>>(std::make_pair(0, 9));
+    Collector::add<Uniform<double, std::uniform_real_distribution<double>>>(
+        std::make_pair(4.0, 5.0));
+    Collector::add<Bernoulli<bool>>(0.75);
+    Collector::add<Gaussian<double>>(std::make_pair(5.0, 2.0));
+    Collector::add<Exponential<double>>(1.25);
+    Collector::add<Discrete<int32_t>>(
+        std::initializer_list<double>{30, 10, 10, 30, 20});
 
-    for (const auto& randptr : dists)
+    for (const auto& randptr : RandomIf::items)
     {
-        randptr->simulate(300, true);
+        randptr->simulate(200, true);
     }
 
     return 0;

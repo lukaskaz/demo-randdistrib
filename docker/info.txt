@@ -1,2 +1,2 @@
 docker build -t random-generator-sim .
-docker run -it random-generator-sim
+docker run -t random-generator-sim
