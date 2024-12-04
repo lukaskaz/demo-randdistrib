@@ -120,9 +120,9 @@ int main()
     Collector::add<Discrete<int32_t>>(
         std::initializer_list<double>{30, 10, 10, 30, 20});
 
-    for (const auto& randptr : RandomIf::items)
+    for (const auto& gen : RandomIf::items)
     {
-        randptr->simulate(200, true);
+        gen->simulate(200, true);
     }
 
     return 0;
