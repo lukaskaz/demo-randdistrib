@@ -1,0 +1,37 @@
+name: Check build/run
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+      # as by default
+      types: [opened, synchronize, reopened]
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    environment: production
+
+    steps:
+    - name: Checking out
+      uses: actions/checkout@v4
+    - name: Building target app
+      run: |
+        mkdir build && cd build && cmake .. && make
+      
+  execution:
+    name: Execution
+    needs: [build]
+    runs-on: ubuntu-latest
+    environment: production
+
+    steps:
+    - name: Checking out
+      uses: actions/checkout@v4
+    - name: Preparing binary
+      run: |
+        mkdir build && cd build && cmake .. && make
+    - name: Executing program
+      run: ./build/randomsim
+
