@@ -1,9 +1,9 @@
-#include "collector.hpp"
 #include "generators/bernoulli.hpp"
 #include "generators/discrete.hpp"
 #include "generators/exponential.hpp"
 #include "generators/gaussian.hpp"
 #include "generators/uniform.hpp"
+#include "random/collector.hpp"
 
 int main()
 {
@@ -23,4 +23,3 @@ int main()
 
     return 0;
 }
-

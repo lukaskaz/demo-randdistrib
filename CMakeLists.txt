@@ -7,8 +7,7 @@ project(randomsim)
 include(cmake/dependencies.cmake)
 include(cmake/flags.cmake)
 
-include_directories(inc)
 file(GLOB_RECURSE SOURCES "src/*.cpp")
 
 add_executable(${PROJECT_NAME} ${SOURCES})
-
+add_dependencies(${PROJECT_NAME} librandom)
