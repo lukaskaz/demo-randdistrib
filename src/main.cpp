@@ -1,9 +1,8 @@
-#include "generators/bernoulli.hpp"
-#include "generators/discrete.hpp"
-#include "generators/exponential.hpp"
-#include "generators/gaussian.hpp"
-#include "generators/uniform.hpp"
-#include "random/collector.hpp"
+#include "random/generators/bernoulli.hpp"
+#include "random/generators/discrete.hpp"
+#include "random/generators/exponential.hpp"
+#include "random/generators/gaussian.hpp"
+#include "random/generators/uniform.hpp"
 
 int main()
 {
